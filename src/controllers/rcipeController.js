@@ -6,17 +6,22 @@ const { default: mongoose } = require('mongoose');
 // @desc    Create a new recipe
 // @route   POST /api/recipes
 // @access  Private
+const { convertPreparationTime } = require('../services/recipeService');
+
 const createRecipe = async (req, res) => {
   const { title, ingredients, steps, image, preparationTime } = req.body;
   console.log(req.body);
 
   try {
+    // Convert preparation time
+    const convertedPreparationTime = convertPreparationTime(preparationTime);
+
     const recipe = await Recipe.create({
       title,
       ingredients,
       steps,
       image,
-      preparationTime,
+      preparationTime: convertedPreparationTime, // Use converted preparation time
       author: req.user._id,
     });
 
