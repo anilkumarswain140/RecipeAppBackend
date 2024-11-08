@@ -33,10 +33,10 @@ describe('Recipe Endpoints', () => {
     await Recipe.deleteMany({});
   });
 
-  describe('POST /api/recipes', () => {
+  describe('POST /api/v1/recipes', () => {
     it('should create a new recipe', async () => {
       const res = await request(app)
-        .post('/api/recipes')
+        .post('/api/v1/recipes')
         .set('Authorization', `Bearer ${token}`)
         .send({
           title: 'Spaghetti Bolognese',
@@ -51,7 +51,7 @@ describe('Recipe Endpoints', () => {
     });
 
     it('should not create a recipe without authentication', async () => {
-      const res = await request(app).post('/api/recipes').send({
+      const res = await request(app).post('/api/v1/recipes').send({
         title: 'Chicken Curry',
         ingredients: ['Chicken', 'Curry Powder', 'Coconut Milk'],
         steps: ['Cook chicken', 'Add curry powder', 'Pour coconut milk'],
@@ -63,7 +63,7 @@ describe('Recipe Endpoints', () => {
 
     it('should not create a recipe with missing fields', async () => {
       const res = await request(app)
-        .post('/api/recipes')
+        .post('/api/v1/recipes')
         .set('Authorization', `Bearer ${token}`)
         .send({
           title: 'Incomplete Recipe',
@@ -75,7 +75,7 @@ describe('Recipe Endpoints', () => {
     });
   });
 
-  describe('GET /api/recipes', () => {
+  describe('GET /api/v1/recipes', () => {
     beforeAll(async () => {
       // Create multiple recipes
       await Recipe.create([
@@ -97,14 +97,14 @@ describe('Recipe Endpoints', () => {
     });
 
     it('should fetch all recipes', async () => {
-      const res = await request(app).get('/api/recipes');
+      const res = await request(app).get('/api/v1/recipes');
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThanOrEqual(2);
       expect(res.body[0]).toHaveProperty('title');
     });
   });
 
-  describe('GET /api/recipes/:id', () => {
+  describe('GET /api/v1/recipes/:id', () => {
     let recipeId;
 
     beforeAll(async () => {
@@ -119,7 +119,7 @@ describe('Recipe Endpoints', () => {
     });
 
     it('should fetch a single recipe by ID', async () => {
-      const res = await request(app).get(`/api/recipes/${recipeId}`);
+      const res = await request(app).get(`/api/v1/recipes/${recipeId}`);
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('title', 'Grilled Cheese Sandwich');
       expect(res.body).toHaveProperty('ingredients');
@@ -128,13 +128,13 @@ describe('Recipe Endpoints', () => {
 
     it('should return 404 for non-existent recipe', async () => {
       const nonExistentId = '60c72b2f9b1d8e1a4c8f9b1d'; // Example ObjectId
-      const res = await request(app).get(`/api/recipes/${nonExistentId}`);
+      const res = await request(app).get(`/api/v1/recipes/${nonExistentId}`);
       expect(res.statusCode).toEqual(404);
       expect(res.body).toHaveProperty('message', 'Recipe not found');
     });
   });
 
-  describe('GET /api/recipes/search', () => {
+  describe('GET /api/v1/recipes/search', () => {
     beforeAll(async () => {
       // Ensure there are recipes to search
       await Recipe.create({
@@ -148,7 +148,7 @@ describe('Recipe Endpoints', () => {
 
     it('should search recipes by ingredients', async () => {
       const res = await request(app).get(
-        '/api/recipes/search?ingredients=Tomatoes,Onions'
+        '/api/v1/recipes/search?ingredients=Tomatoes,Onions'
       );
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThanOrEqual(1);
@@ -157,14 +157,14 @@ describe('Recipe Endpoints', () => {
 
     it('should return empty array if no recipes match', async () => {
       const res = await request(app).get(
-        '/api/recipes/search?ingredients=Dragonfruit'
+        '/api/v1/recipes/search?ingredients=Dragonfruit'
       );
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toEqual(0);
     });
   });
 
-  describe('GET /api/recipes/filter', () => {
+  describe('GET /api/v1/recipes/filter', () => {
     beforeAll(async () => {
       // Add average ratings and preparation times
       const recipe1 = await Recipe.findOne({ title: 'Pancakes' });
@@ -177,7 +177,7 @@ describe('Recipe Endpoints', () => {
     });
 
     it('should filter recipes by minimum rating', async () => {
-      const res = await request(app).get('/api/recipes/filter?rating=4');
+      const res = await request(app).get('/api/v1/recipes/filter?rating=4');
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThanOrEqual(1);
       res.body.forEach((recipe) => {
@@ -186,7 +186,7 @@ describe('Recipe Endpoints', () => {
     });
 
     it('should filter recipes by maximum preparation time', async () => {
-      const res = await request(app).get('/api/recipes/filter?preparationTime=15');
+      const res = await request(app).get('/api/v1/recipes/filter?preparationTime=15');
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThanOrEqual(1);
       res.body.forEach((recipe) => {
@@ -196,7 +196,7 @@ describe('Recipe Endpoints', () => {
 
     it('should filter recipes by rating and preparation time', async () => {
       const res = await request(app).get(
-        '/api/recipes/filter?rating=3&preparationTime=20'
+        '/api/v1/recipes/filter?rating=3&preparationTime=20'
       );
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThanOrEqual(1);
@@ -207,7 +207,7 @@ describe('Recipe Endpoints', () => {
     });
   });
 
-  describe('POST /api/recipes/:id/rate', () => {
+  describe('POST /api/v1/recipes/:id/rate', () => {
     let recipeId;
 
     beforeAll(async () => {
@@ -223,7 +223,7 @@ describe('Recipe Endpoints', () => {
 
     it('should allow a user to rate a recipe', async () => {
       const res = await request(app)
-        .post(`/api/recipes/${recipeId}/rate`)
+        .post(`/api/v1/recipes/${recipeId}/rate`)
         .set('Authorization', `Bearer ${token}`)
         .send({ value: 5 });
       expect(res.statusCode).toEqual(200);
@@ -233,7 +233,7 @@ describe('Recipe Endpoints', () => {
     it('should allow a user to update their rating', async () => {
       // Update rating to 4
       const res = await request(app)
-        .post(`/api/recipes/${recipeId}/rate`)
+        .post(`/api/v1/recipes/${recipeId}/rate`)
         .set('Authorization', `Bearer ${token}`)
         .send({ value: 4 });
       expect(res.statusCode).toEqual(200);
@@ -242,7 +242,7 @@ describe('Recipe Endpoints', () => {
 
     it('should not allow rating without authentication', async () => {
       const res = await request(app)
-        .post(`/api/recipes/${recipeId}/rate`)
+        .post(`/api/v1/recipes/${recipeId}/rate`)
         .send({ value: 3 });
       expect(res.statusCode).toEqual(401);
       expect(res.body).toHaveProperty('message', 'Not authorized, no token');
@@ -250,7 +250,7 @@ describe('Recipe Endpoints', () => {
 
     it('should not allow invalid rating values', async () => {
       const res = await request(app)
-        .post(`/api/recipes/${recipeId}/rate`)
+        .post(`/api/v1/recipes/${recipeId}/rate`)
         .set('Authorization', `Bearer ${token}`)
         .send({ value: 6 }); // Invalid rating (greater than 5)
       expect(res.statusCode).toEqual(400);

@@ -14,10 +14,10 @@ describe('Authentication Endpoints', () => {
     await User.deleteMany({});
   });
 
-  describe('POST /api/auth/register', () => {
+  describe('POST /api/v1/auth/register', () => {
     it('should register a new user', async () => {
       const res = await request(app)
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           username: 'testuser',
           email: 'test@example.com',
@@ -32,7 +32,7 @@ describe('Authentication Endpoints', () => {
     it('should not register a user with existing email', async () => {
       // First registration
       await request(app)
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           username: 'testuser',
           email: 'test@example.com',
@@ -41,7 +41,7 @@ describe('Authentication Endpoints', () => {
 
       // Attempt to register again with the same email
       const res = await request(app)
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           username: 'anotheruser',
           email: 'test@example.com',
@@ -53,7 +53,7 @@ describe('Authentication Endpoints', () => {
 
     it('should not register a user with invalid email', async () => {
       const res = await request(app)
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           username: 'testuser',
           email: 'invalidemail',
@@ -64,11 +64,11 @@ describe('Authentication Endpoints', () => {
     });
   });
 
-  describe('POST /api/auth/login', () => {
+  describe('POST /api/v1/auth/login', () => {
     beforeEach(async () => {
       // Register a user to login with
       await request(app)
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           username: 'testuser',
           email: 'test@example.com',
@@ -78,7 +78,7 @@ describe('Authentication Endpoints', () => {
 
     it('should login an existing user', async () => {
       const res = await request(app)
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: 'test@example.com',
           password: 'password123',
@@ -90,7 +90,7 @@ describe('Authentication Endpoints', () => {
 
     it('should not login with incorrect password', async () => {
       const res = await request(app)
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: 'test@example.com',
           password: 'wrongpassword',
@@ -101,7 +101,7 @@ describe('Authentication Endpoints', () => {
 
     it('should not login with non-existent email', async () => {
       const res = await request(app)
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: 'nonexistent@example.com',
           password: 'password123',
