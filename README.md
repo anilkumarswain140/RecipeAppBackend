@@ -338,7 +338,10 @@ const getComments = async (req, res) => {
 1. Validate the `recipeId`.
 2. Fetch all comments for the recipe.
 3. Populate the `author` field with the username.
-4. Return the list of comments or an error message.
+4. Return the list of comments or an error message.  
+
+## App is live on this Url  
+https://recipeapp-green.vercel.app/
 
 
 ## License
